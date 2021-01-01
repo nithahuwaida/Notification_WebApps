@@ -1,4 +1,5 @@
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/messaging';
 
 const config = {
     apiKey: process.env.REACT_APP_APIKEY,
@@ -9,6 +10,19 @@ const config = {
     appId: process.env.REACT_APP_APPID,
     measurementId: process.env.REACT_APP_MEASUREMENTID
 };
-firebase.initializeApp(config);
 
-export default firebase;
+export const initFirebase = () => {
+    firebase.initializeApp(config);
+}
+
+export const permissionToReceiveNotification = async () => {
+    try {
+        const messaging = firebase.messaging();
+        await messaging.requestPermission();
+        const token = await messaging.getToken();
+        console.log(token)
+        return token;
+    } catch (error) {
+        console.error(error);
+    }
+}
